@@ -21,7 +21,7 @@ def generate_sql(conf):
 
 def main():
     spark = SparkSession.builder.appName("IcebergTableCreator").getOrCreate()
-    conf = load_config("iceberg_tables/customers.yaml")
+    conf = load_config("../iceberg_tables/customers.yml")
     sql = generate_sql(conf)
     spark.sql(sql)
     print(f"Table {conf['table']} created.")

@@ -1,0 +1,21 @@
+# Ignore Python bytecode
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore distribution and build directories
+dist/
+build/
+*.egg-info/
+
+# Ignore virtual environment directories
+venv/
+env/
+
+# Ignore package distribution files
+*.tar.gz
+*.whl
+
+# Ignore file for github action
+.secrets
