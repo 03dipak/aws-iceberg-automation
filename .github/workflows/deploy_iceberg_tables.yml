@@ -39,4 +39,5 @@ jobs:
         run: |
           # Normally you'd trigger AWS Glue job here, or run Spark job locally in EMR
           echo "Triggering Iceberg Table Creation..."
-          python src/glue_etl/bootstrap/create_iceberg_tables.py
+          python src/glue_etl/bootstrap/create_iceberg_tables.py python src/glue_etl/bootstrap/create_iceberg_table.py iceberg_tables/customers.yml s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
+
