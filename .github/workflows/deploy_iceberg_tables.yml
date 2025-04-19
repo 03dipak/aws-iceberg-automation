@@ -29,6 +29,12 @@ jobs:
         with:
           python-version: 3
 
+      - name: Install necessary utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y coreutils
+          sudo apt-get install -y sudo
+
       - name: Install Spark (and dependencies)
         run: |
           echo "Downloading Spark 3.5.5..."
@@ -47,7 +53,8 @@ jobs:
       - name: Set up Spark environment (including JARs for Iceberg)
         run: |
           # Create directory for Spark jars
-          mkdir -p $GITHUB_WORKSPACE/spark/jars
+          # Create directory for Spark jars using Python
+          python -c "import os; os.makedirs('$GITHUB_WORKSPACE/spark/jars', exist_ok=True)"
 
           # Download JAR files for Iceberg and Hadoop AWS
           curl -L -o $GITHUB_WORKSPACE/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.4.2/iceberg-spark-runtime-3.3_2.12-1.4.2.jar
