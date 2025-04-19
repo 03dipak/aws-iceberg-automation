@@ -31,20 +31,16 @@ jobs:
 
       - name: Install Spark (and dependencies)
         run: |
-          echo "Downloading Spark 3.3.1..."
-
-          curl -L -o spark.tgz https://archive.apache.org/dist/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
-
-          echo "Checking downloaded file..."
-          file spark.tgz
-
+          echo "Downloading Spark 3.5.5..."
+          curl -L -o spark.tgz https://dlcdn.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
+          
           echo "Extracting Spark..."
           tar -xzf spark.tgz
           sudo mv spark-3.5.5-bin-hadoop3 /usr/local/spark
 
           echo "Setting up Spark environment..."
           echo "SPARK_HOME=/usr/local/spark" >> $GITHUB_ENV
-          echo "PATH=/usr/local/spark/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH=/usr/local/spark/bin:\$PATH" >> $GITHUB_ENV
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
 
@@ -63,6 +59,9 @@ jobs:
 
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
-          # Normally you'd trigger AWS Glue job here, or run Spark job locally in EMR
-          echo "Triggering Iceberg Table Creation..."
-          python src/glue_etl/bootstrap/create_iceberg_tables.py iceberg_tables/customers.yml s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
+          echo "🔧 Running Iceberg Table Creation Script..."
+          /usr/local/spark/bin/spark-submit \
+            --jars "$HOME/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar,$HOME/spark/jars/hadoop-aws-3.3.2.jar,$HOME/spark/jars/aws-java-sdk-bundle-1.11.1054.jar" \
+            src/glue_etl/bootstrap/create_iceberg_tables.py \
+            iceberg_tables/customers.yml \
+            s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
