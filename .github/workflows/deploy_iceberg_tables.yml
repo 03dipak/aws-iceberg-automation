@@ -50,6 +50,12 @@ jobs:
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
 
+      - name: Install necessary utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y coreutils
+          sudo apt-get install -y sudo
+  
       - name: Set up Spark environment (including JARs for Iceberg)
         run: |
           # Create directory for Spark jars
