@@ -20,9 +20,19 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::980921712180:role/WebConsole
           aws-region: ap-south-1
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3
+
+      - name: Install dependencies
+        run: |
+          pip install pyspark
+          pip install boto3
 
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
           # Normally you'd trigger AWS Glue job here, or run Spark job locally in EMR
           echo "Triggering Iceberg Table Creation..."
-          python3 src/glue_etl/bootstrap/create_iceberg_tables.py
+          python src/glue_etl/bootstrap/create_iceberg_tables.py
