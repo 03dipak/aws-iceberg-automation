@@ -1,0 +1,28 @@
+database: glue_catalog.bronze
+table: customers
+location: s3://glue-bucket-dev-prod-bucket-march2025/bronze/customers
+format_version: 2
+partitioned_by:
+  - CountryRegion
+  - PostalCode
+columns:
+  - name: FirstName
+    type: STRING
+  - name: LastName
+    type: STRING
+  - name: CompanyName 
+    type: STRING 
+  - name: EmailAddress
+    type: STRING
+  - name: Phone
+    type: STRING
+  - name: CustomerID
+    type: STRING
+  - name: AddressLine1 
+    type: STRING
+  - name: City
+    type: STRING
+  - name: CountryRegion
+    type: STRING,
+  - name: PostalCode 
+    type: STRING
