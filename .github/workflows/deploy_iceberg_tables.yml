@@ -9,15 +9,15 @@ name: Deploy Iceberg Table
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     permissions:
       id-token: write  # Needed for OIDC
       contents: read
-      
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3
-          
+
       - name: Install Spark (and dependencies)
         run: |
           # Download and install Spark
