@@ -49,6 +49,5 @@ def main():
 
     spark.sql(create_sql)
     print(f"✅ Iceberg table glue_catalog.{conf['database']}.{conf['table']} created.")
-
 if __name__ == "__main__":
     main()

@@ -23,6 +23,6 @@ columns:
   - name: City
     type: STRING
   - name: CountryRegion
-    type: STRING,
+    type: STRING
   - name: PostalCode 
     type: STRING
