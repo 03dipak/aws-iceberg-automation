@@ -35,6 +35,17 @@ jobs:
           sudo apt-get install -y coreutils
           sudo apt-get install -y sudo
 
+      - name: Set up Spark environment (including JARs for Iceberg)
+        run: |
+          # Create directory for Spark jars
+          # Create directory for Spark jars using Python
+          python -c "import os; os.makedirs('/tmp/spark/jars', exist_ok=True)"
+
+          # Download JAR files for Iceberg and Hadoop AWS
+          curl -L -o /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.4.2/iceberg-spark-runtime-3.3_2.12-1.4.2.jar
+          curl -L -o /tmp/spark/jars/hadoop-aws-3.3.2.jar https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.2/hadoop-aws-3.3.2.jar
+          curl -L -o /tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1054/aws-java-sdk-bundle-1.11.1054.jar
+      
       - name: Install Spark (and dependencies)
         run: |
           echo "Downloading Spark 3.5.5..."
@@ -49,23 +60,7 @@ jobs:
           echo "PATH=/usr/local/spark/bin:\$PATH" >> $GITHUB_ENV
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
-
-      - name: Install necessary utilities
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y coreutils
-          sudo apt-get install -y sudo
-  
-      - name: Set up Spark environment (including JARs for Iceberg)
-        run: |
-          # Create directory for Spark jars
-          # Create directory for Spark jars using Python
-          python -c "import os; os.makedirs('/tmp/spark/jars', exist_ok=True)"
-
-          # Download JAR files for Iceberg and Hadoop AWS
-          curl -L -o /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.4.2/iceberg-spark-runtime-3.3_2.12-1.4.2.jar
-          curl -L -o /tmp/spark/jars/hadoop-aws-3.3.2.jar https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.2/hadoop-aws-3.3.2.jar
-          curl -L -o /tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1054/aws-java-sdk-bundle-1.11.1054.jar
+      
       - name: Install dependencies
         run: |
           pip install pyspark
