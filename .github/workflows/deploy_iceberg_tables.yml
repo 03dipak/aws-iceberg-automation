@@ -33,6 +33,7 @@ jobs:
         run: |
           pip install pyspark
           pip install boto3
+          pip install pyyaml
 
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
