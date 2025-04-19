@@ -13,6 +13,8 @@ def create_spark_session(warehouse_path: str, app_name="IcebergTableCreator") ->
         .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog")
         .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO")
         .config("spark.sql.catalog.glue_catalog.warehouse", warehouse_path)
+        .config("spark.sql.catalog.glue_catalog.lock-impl", "org.apache.iceberg.aws.glue.DynamoLockManager")
+        .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table")
         .config("spark.sql.defaultCatalog", "glue_catalog")
         .enableHiveSupport()
         .getOrCreate()
