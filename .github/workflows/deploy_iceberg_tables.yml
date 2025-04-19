@@ -47,7 +47,7 @@ jobs:
       - name: Set up Spark environment (including JARs for Iceberg)
         shell: bash
         run: |
-          mkdir -p $HOME/spark/jars
+          sudo mkdir -p $HOME/spark/jars
           curl -L -o $HOME/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.4.2/iceberg-spark-runtime-3.3_2.12-1.4.2.jar
           curl -L -o $HOME/spark/jars/hadoop-aws-3.3.2.jar https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.2/hadoop-aws-3.3.2.jar
           curl -L -o $HOME/spark/jars/aws-java-sdk-bundle-1.11.1054.jar https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1054/aws-java-sdk-bundle-1.11.1054.jar
