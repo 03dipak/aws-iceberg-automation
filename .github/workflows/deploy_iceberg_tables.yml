@@ -33,14 +33,14 @@ jobs:
         run: |
           echo "Downloading Spark 3.3.1..."
 
-          curl -L -o spark.tgz https://archive.apache.org/dist/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.2.tgz
+          curl -L -o spark.tgz https://archive.apache.org/dist/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
 
           echo "Checking downloaded file..."
           file spark.tgz
 
           echo "Extracting Spark..."
           tar -xzf spark.tgz
-          sudo mv spark-3.3.1-bin-hadoop3.2 /usr/local/spark
+          sudo mv spark-3.5.5-bin-hadoop3 /usr/local/spark
 
           echo "Setting up Spark environment..."
           echo "SPARK_HOME=/usr/local/spark" >> $GITHUB_ENV
