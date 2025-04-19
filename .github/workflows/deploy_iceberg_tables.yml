@@ -31,19 +31,20 @@ jobs:
 
       - name: Install Spark (and dependencies)
         run: |
-          # Download and install Spark
-          curl -sL https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.2.tgz -o spark.tgz
+          echo "Downloading Spark..."
+          curl -v -L -o spark.tgz https://downloads.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.2.tgz || \
+          curl -v -L -o spark.tgz https://archive.apache.org/dist/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.2.tgz
 
-          # Check file type to verify it's a tgz file
+          echo "Checking downloaded file..."
           file spark.tgz
 
-          # Extract the file if it's a valid tgz
-          tar -xf spark.tgz
-          sudo mv spark-3.3.2-bin-hadoop3.2 /usr/local/spark
+          echo "Extracting Spark..."
+          tar -xzf spark.tgz
+          mv spark-3.3.2-bin-hadoop3.2 /usr/local/spark
 
-          # Set environment variables for Spark
+          echo "Setting up Spark environment..."
           echo "SPARK_HOME=/usr/local/spark" >> $GITHUB_ENV
-          echo "PATH=$SPARK_HOME/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH=/usr/local/spark/bin:$PATH" >> $GITHUB_ENV
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
 
