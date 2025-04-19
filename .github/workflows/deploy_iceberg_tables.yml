@@ -45,6 +45,7 @@ jobs:
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
 
       - name: Set up Spark environment (including JARs for Iceberg)
+        shell: bash
         run: |
           mkdir -p $HOME/spark/jars
           curl -L -o $HOME/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.4.2/iceberg-spark-runtime-3.3_2.12-1.4.2.jar
