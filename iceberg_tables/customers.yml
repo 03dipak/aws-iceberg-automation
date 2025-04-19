@@ -1,6 +1,6 @@
-database: glue_catalog.bronze
+database: bronze
 table: customers
-location: s3://glue-bucket-dev-prod-bucket-march2025/bronze/customers
+location: s3://glue-bucket-dev-prod-bucket-march2025/warehouse/bronze/customers
 format_version: 2
 partitioned_by:
   - CountryRegion
