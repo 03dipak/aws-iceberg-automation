@@ -56,9 +56,15 @@ def main():
         
 
     create_sql = generate_sql(conf)
-    print("🔧 Running SQL:\n", create_sql)
     ensure_database_exists(conf['database'])
-    spark.sql(create_sql)
+    try:
+        print("🔧 Running SQL:\n", create_sql)
+        spark.sql(create_sql)
+    except Exception as e:
+        print("❌ Error executing SQL:")
+        import traceback
+        traceback.print_exc()    
+    
     print(f"✅ Iceberg table glue_catalog.{conf['database']}.{conf['table']} created.")
 if __name__ == "__main__":
     main()
