@@ -6,6 +6,9 @@ from botocore.exceptions import ClientError
 import textwrap
 import os
 import requests
+import zipfile
+
+
 
 # 1. Define required JARs and download them
 JAR_DIR = "/opt/aws-glue-libs/jarsv1"
@@ -64,7 +67,21 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.executor.extraClassPath", full_har_dir) \
         .getOrCreate()
 
+
+print("JARs available in JAR_DIR:")
+print(os.listdir(JAR_DIR))
+
 pathcheck = os.environ.get("CLASSPATH")
 print(f"❌ get class file path: {pathcheck}")
+
+print("🔥 Spark Version:", spark.version)
+
+
+jar_path = "/opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar"
+with zipfile.ZipFile(jar_path, 'r') as jar:
+    with jar.open('META-INF/MANIFEST.MF') as manifest:
+        for line in manifest:
+            print(line.decode().strip())
+
 spark.sql("SHOW DATABASES").show()
 
