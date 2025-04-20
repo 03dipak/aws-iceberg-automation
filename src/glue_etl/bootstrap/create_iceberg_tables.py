@@ -72,7 +72,15 @@ def main():
         .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
-        .config("spark.jars", "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar") \
+        .config("spark.jars", ",".join([
+            "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar",
+            "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-aws-1.3.0.jar",
+            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/glue-2.20.143.jar",
+            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/sts-2.20.143.jar",
+            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/auth-2.20.143.jar",
+            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/core-2.20.143.jar",
+            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/regions-2.20.143.jar",
+            ])) \
         .enableHiveSupport() \
         .getOrCreate()
         
