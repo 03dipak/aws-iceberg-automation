@@ -77,7 +77,8 @@ def main():
         "https://repo1.maven.org/maven2/software/amazon/awssdk/glue/2.20.143/glue-2.20.143.jar",
         "https://repo1.maven.org/maven2/software/amazon/awssdk/sts/2.20.143/sts-2.20.143.jar",
         "https://repo1.maven.org/maven2/software/amazon/awssdk/auth/2.20.143/auth-2.20.143.jar",
-        "https://repo1.maven.org/maven2/software/amazon/awssdk/core/2.20.143/core-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/aws-core/2.20.143/aws-core-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/sdk-core/2.20.143/sdk-core-2.20.143.jar",
         "https://repo1.maven.org/maven2/software/amazon/awssdk/regions/2.20.143/regions-2.20.143.jar",
     ]
 
