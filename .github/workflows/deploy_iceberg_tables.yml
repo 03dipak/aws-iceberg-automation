@@ -68,6 +68,7 @@ jobs:
           pip install pyyaml
 
       - name: Setup Python and Spark (or use Glue Job trigger here)
+        shell: /bin/bash
         run: |
           echo "🔧 Running Iceberg Table Creation Script..."
           /usr/local/spark/bin/spark-submit \
