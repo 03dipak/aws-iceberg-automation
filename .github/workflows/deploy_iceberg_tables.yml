@@ -37,8 +37,8 @@ jobs:
 
       - name: Install Spark (and dependencies)
         run: |
-          echo "Downloading Spark 3.5.5..."
-          curl -L -o spark.tgz https://dlcdn.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
+          echo "Downloading Spark 3.4.4..."
+          curl -L -o spark.tgz https://dlcdn.apache.org/spark/spark-3.4.4/spark-3.4.4-bin-hadoop3.tgz
           
           echo "Extracting Spark..."
           tar -xzf spark.tgz
