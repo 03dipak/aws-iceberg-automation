@@ -54,6 +54,11 @@ for url in JARS:
 full_har_dir =  ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])
 
 os.environ["PYSPARK_SUBMIT_ARGS"] = f"--jars {full_har_dir} pyspark-shell"
+
+# Check if JARs are included in the classpath
+print("ClassPath:", os.environ.get("CLASSPATH"))
+print("PYSPARK_SUBMIT_ARGS:", os.environ.get("PYSPARK_SUBMIT_ARGS"))
+
 from pyspark.sql import SparkSession
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
