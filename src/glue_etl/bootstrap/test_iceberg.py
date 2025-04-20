@@ -47,7 +47,7 @@ for url in JARS:
         except IOError as io_err:
             print(f"❌ File write error: {io_err}")
 
-
+full_har_dir =  ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
@@ -58,8 +58,10 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
-        .config("spark.jars", ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])) \
+        .config("spark.jars", full_har_dir) \
         .enableHiveSupport() \
+        .config("spark.driver.extraClassPath", full_har_dir) \
+        .config("spark.executor.extraClassPath", full_har_dir) \
         .getOrCreate()
 
 pathcheck = os.environ.get("CLASSPATH")
