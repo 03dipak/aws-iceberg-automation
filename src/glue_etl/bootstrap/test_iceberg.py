@@ -60,8 +60,6 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
         .config("spark.jars", ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])) \
         .enableHiveSupport() \
-        .config("spark.driver.extraClassPath", JAR_DIR) \
-        .config("spark.executor.extraClassPath", JAR_DIR) \
         .getOrCreate()
 
 spark.sql("SHOW DATABASES").show()
