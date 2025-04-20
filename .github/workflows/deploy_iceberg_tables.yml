@@ -44,17 +44,6 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: 🧪 Check for SparkCatalog class in Iceberg JAR
-        run: |
-          echo "Downloading Iceberg JAR..."
-          mkdir -p /opt/aws-glue-libs/jarsv1
-          curl -L -o /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar \
-            https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.4.0/iceberg-spark-runtime-3.4_2.12-1.4.0.jar
-
-          echo "Checking if SparkCatalog class exists..."
-          jar tf /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar | \
-            grep "org/apache/iceberg/spark/SparkCatalog.class" || echo "❌ SparkCatalog class NOT FOUND!"
-      
       - name: Install Spark (and dependencies)
         run: |
           echo "Downloading Spark 3.4.4..."
@@ -70,17 +59,40 @@ jobs:
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
 
-      - name: 🧪 Verify Spark install
+      - name: 🧪 Run Iceberg Table Creation Script with JARs
         run: |
-          /usr/local/spark/bin/spark-submit --version
+          echo "⏬ Downloading required JARs..."
+          JAR_DIR=/opt/aws-glue-libs/jarsv1
+          mkdir -p $JAR_DIR
+          
+          declare -a urls=(
+            "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.4.0/iceberg-spark-runtime-3.4_2.12-1.4.0.jar"
+            "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-aws/1.4.0/iceberg-aws-1.4.0.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/glue/2.20.143/glue-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/sts/2.20.143/sts-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/auth/2.20.143/auth-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/aws-core/2.20.143/aws-core-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/sdk-core/2.20.143/sdk-core-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/regions/2.20.143/regions-2.20.143.jar"
+          )
 
-      - name: Setup Spark with JARs
-        run: |
-          echo "Setting PYSPARK_SUBMIT_ARGS..."
-          full_har_dir=$(echo $JAR_DIR/*.jar | tr ' ' ',')
-          echo "PYSPARK_SUBMIT_ARGS=--jars $full_har_dir pyspark-shell" >> $GITHUB_ENV
+          for url in "${urls[@]}"; do
+            filename=$(basename "$url")
+            filepath="$JAR_DIR/$filename"
+            if [ ! -f "$filepath" ]; then
+              echo "📥 Downloading $filename"
+              curl -L -o "$filepath" "$url"
+            fi
+          done
 
-      - name: 🧪 Run Iceberg Table Creation Script
-        run: |
-          echo "🔧 Running Iceberg Table Creation Script..."
-          /usr/local/spark/bin/spark-submit src/glue_etl/bootstrap/test_iceberg.py
+          # Build comma-separated list of JARs
+          jars=$(echo $JAR_DIR/*.jar | tr ' ' ',')
+
+          echo "🚀 Submitting Spark job with JARs..."
+          /usr/local/spark/bin/spark-submit \
+          --jars "$jars" \
+          src/glue_etl/bootstrap/test_iceberg.py
+
+          echo "Checking if SparkCatalog class exists..."
+          jar tf /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar | \
+          grep "org/apache/iceberg/spark/SparkCatalog.class" || echo "❌ SparkCatalog class NOT FOUND!"
