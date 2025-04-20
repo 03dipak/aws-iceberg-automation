@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "🔧 Running Iceberg Table Creation Script..."
           /usr/local/spark/bin/spark-submit \
-            --jars /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar,/tmp/spark/jars/hadoop-aws-3.3.2.jar,/tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar \ 
-            src/glue_etl/bootstrap/create_iceberg_tables.py \
-            iceberg_tables/customers.yml \
-            s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
+          --jars /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar,/tmp/spark/jars/hadoop-aws-3.3.2.jar,/tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar \ 
+          src/glue_etl/bootstrap/create_iceberg_tables.py \
+          iceberg_tables/customers.yml \
+          s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
