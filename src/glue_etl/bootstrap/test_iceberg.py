@@ -14,6 +14,15 @@ from py4j.protocol import Py4JJavaError
 print("ClassPath:", os.environ.get("CLASSPATH"))
 print("PYSPARK_SUBMIT_ARGS:", os.environ.get("PYSPARK_SUBMIT_ARGS"))
 
+# JAR file path
+jar_path = "/opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar"
+
+# Step 1: Validate the class exists in the JAR
+print("🔍 Checking if SparkCatalog class exists in the JAR...")
+with zipfile.ZipFile(jar_path, 'r') as jar:
+    found = any("org/apache/iceberg/spark/SparkCatalog.class" in name for name in jar.namelist())
+    print("✅ Class found in JAR!" if found else "❌ Class NOT found in JAR!")
+
 from pyspark.sql import SparkSession
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
@@ -35,6 +44,15 @@ print("--------------------------")
 print(spark.sparkContext._conf.get("spark.driver.extraClassPath"))
 print("--------------------------") 
 print("hello")
+
+# Step 3: Java class resolution check
+try:
+    print("🔍 Trying to load Java class: org.apache.iceberg.spark.SparkCatalog")
+    catalog_class = spark._jvm.java.lang.Class.forName("org.apache.iceberg.spark.SparkCatalog")
+    print("✅ SparkCatalog class found!")
+except Py4JJavaError as e:
+    print("❌ SparkCatalog class NOT found.")
+    print(e.java_exception.getMessage())
 
 try:
     catalog_class = spark._jvm.java.lang.Class.forName("org.apache.iceberg.spark.SparkCatalog")
