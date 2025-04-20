@@ -57,6 +57,9 @@ os.environ["PYSPARK_SUBMIT_ARGS"] = f"--jars {full_har_dir} pyspark-shell"
 from pyspark.sql import SparkSession
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
+        .config("spark.jars", full_har_dir) \
+        .config("spark.driver.extraClassPath", full_har_dir) \
+        .config("spark.executor.extraClassPath", full_har_dir) \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
         .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
         .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO") \
