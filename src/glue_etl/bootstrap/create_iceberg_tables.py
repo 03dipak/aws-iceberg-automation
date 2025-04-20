@@ -104,7 +104,19 @@ def main():
                 print(f"❌ Request failed: {req_err}")
             except IOError as io_err:
                 print(f"❌ File write error: {io_err}")
+    
+    # 2. Verify that all JARs have been successfully downloaded
+    missing_jars = [
+        jar for jar in JARS
+        if not os.path.exists(os.path.join(JAR_DIR, os.path.basename(jar)))
+    ]
 
+    if missing_jars:
+        print("❌ The following required JARs are missing and could not be downloaded:")
+        for jar in missing_jars:
+            print(f" - {jar}")
+        sys.exit(1)
+    
     spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
         .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
