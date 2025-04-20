@@ -1,25 +1,22 @@
 import sys
 import yaml
 from pyspark.sql import SparkSession
+import boto3
+from botocore.exceptions import ClientError
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
         return yaml.safe_load(f)
 
-def create_spark_session(warehouse_path: str, app_name="IcebergTableCreator") -> SparkSession:
-    return (
-        SparkSession.builder.appName(app_name) \
-        .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
-        .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
-        .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO") \
-        .config("spark.sql.catalog.glue_catalog.warehouse", warehouse_path) \
-        .config("spark.sql.catalog.glue_catalog.lock-impl", "org.apache.iceberg.aws.glue.DynamoLockManager") \
-        .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
-        .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
-        .config("spark.sql.defaultCatalog", "glue_catalog") \
-        .config("spark.jars", "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar") \
-        .getOrCreate()
-    )
+def ensure_database_exists(database_name):
+    client = boto3.client('glue')
+    try:
+        client.get_database(Name=database_name)
+        print(f"✅ Database '{database_name}' already exists.")
+    except client.exceptions.EntityNotFoundException:
+        print(f"📁 Database '{database_name}' not found. Creating...")
+        client.create_database(DatabaseInput={"Name": database_name})
+        print(f"✅ Database '{database_name}' created successfully.")
 
 def generate_sql(conf: dict) -> str:
     columns = ",\n  ".join([f"{col['name']} {col['type']}" for col in conf["columns"]])
@@ -45,11 +42,22 @@ def main():
     warehouse_path = sys.argv[2]
 
     conf = load_config(config_path)
-    spark = create_spark_session(warehouse_path)
+    spark = SparkSession.builder.appName("IcebergTableCreator") \
+        .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
+        .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
+        .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO") \
+        .config("spark.sql.catalog.glue_catalog.warehouse", warehouse_path) \
+        .config("spark.sql.catalog.glue_catalog.lock-impl", "org.apache.iceberg.aws.glue.DynamoLockManager") \
+        .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
+        .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
+        .config("spark.sql.defaultCatalog", "glue_catalog") \
+        .config("spark.jars", "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar") \
+        .getOrCreate()
+        
 
     create_sql = generate_sql(conf)
     print("🔧 Running SQL:\n", create_sql)
-
+    ensure_database_exists(conf['database'])
     spark.sql(create_sql)
     print(f"✅ Iceberg table glue_catalog.{conf['database']}.{conf['table']} created.")
 if __name__ == "__main__":

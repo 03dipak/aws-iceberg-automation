@@ -19,3 +19,6 @@ env/
 
 # Ignore file for github action
 .secrets
+
+.ipynb_checkpoints
+note-book-checking.ipynb
