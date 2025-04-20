@@ -18,7 +18,6 @@ def create_spark_session(warehouse_path: str, app_name="IcebergTableCreator") ->
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
         .config("spark.jars", "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar") \
-        .enableHiveSupport() \
         .getOrCreate()
     )
 
