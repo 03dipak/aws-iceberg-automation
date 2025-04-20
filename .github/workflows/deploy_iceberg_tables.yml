@@ -57,7 +57,7 @@ jobs:
 
           echo "Setting up Spark environment..."
           echo "SPARK_HOME=/usr/local/spark" >> $GITHUB_ENV
-          echo "PATH=/usr/local/spark/bin:\$PATH" >> $GITHUB_ENV
+          echo "PATH=/usr/local/spark/bin:$PATH" >> $GITHUB_ENV
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
       
