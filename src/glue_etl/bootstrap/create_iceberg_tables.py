@@ -4,6 +4,8 @@ from pyspark.sql import SparkSession
 import boto3
 from botocore.exceptions import ClientError
 import textwrap
+import os
+import requests
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
@@ -63,6 +65,30 @@ def main():
     warehouse_path = sys.argv[2]
 
     conf = load_config(config_path)
+    # 1. Define required JARs and download them
+    JAR_DIR = "/opt/aws-glue-libs/jarsv1"
+    os.makedirs(JAR_DIR, exist_ok=True)
+
+    JARS = [
+        # Iceberg JARs
+        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.3.0/iceberg-spark-runtime-3.3_2.12-1.3.0.jar",
+        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-aws/1.3.0/iceberg-aws-1.3.0.jar",
+        # AWS SDK JARs
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/glue/2.20.143/glue-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/sts/2.20.143/sts-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/auth/2.20.143/auth-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/core/2.20.143/core-2.20.143.jar",
+        "https://repo1.maven.org/maven2/software/amazon/awssdk/regions/2.20.143/regions-2.20.143.jar",
+    ]
+
+    for url in JARS:
+        filename = os.path.join(JAR_DIR, url.split("/")[-1])
+        if not os.path.exists(filename):
+            print(f"📥 Downloading: {url}")
+            r = requests.get(url)
+            with open(filename, "wb") as f:
+                f.write(r.content)  
+
     spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
         .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
@@ -72,15 +98,7 @@ def main():
         .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
-        .config("spark.jars", ",".join([
-            "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar",
-            "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-aws-1.3.0.jar",
-            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/glue-2.20.143.jar",
-            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/sts-2.20.143.jar",
-            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/auth-2.20.143.jar",
-            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/core-2.20.143.jar",
-            "/opt/aws-glue-libs/jarsv1/software/amazon/awssdk/regions-2.20.143.jar",
-            ])) \
+        .config("spark.jars", ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])) \
         .enableHiveSupport() \
         .getOrCreate()
         

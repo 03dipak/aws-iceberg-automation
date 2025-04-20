@@ -27,25 +27,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3
-
-      - name: Install necessary utilities
+          python-version: 3      
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y coreutils
-          sudo apt-get install -y sudo
+          pip install requests
+          pip install pyspark
+          pip install boto3
+          pip install pyyaml
 
-      - name: Set up Spark environment (including JARs for Iceberg)
-        run: |
-          # Create directory for Spark jars
-          # Create directory for Spark jars using Python
-          python -c "import os; os.makedirs('/tmp/spark/jars', exist_ok=True)"
-
-          # Download JAR files for Iceberg and Hadoop AWS
-          curl -L -o /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.8.1/iceberg-spark-runtime-3.5_2.12-1.8.1.jar
-          curl -L -o /tmp/spark/jars/hadoop-aws-3.3.2.jar https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.1/hadoop-aws-3.4.1.jar
-          curl -L -o /tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1054/aws-java-sdk-bundle-1.11.1054.jar/aws-java-sdk-bundle-1.11.271.jar
-      
       - name: Install Spark (and dependencies)
         run: |
           echo "Downloading Spark 3.5.5..."
@@ -60,12 +49,10 @@ jobs:
           echo "PATH=/usr/local/spark/bin:$PATH" >> $GITHUB_ENV
           echo "PYSPARK_PYTHON=python" >> $GITHUB_ENV
           echo "PYSPARK_DRIVER_PYTHON=python" >> $GITHUB_ENV
-      
-      - name: Install dependencies
+
+      - name: 🧪 Verify Spark install
         run: |
-          pip install pyspark
-          pip install boto3
-          pip install pyyaml
+          /usr/local/spark/bin/spark-submit --version
 
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
