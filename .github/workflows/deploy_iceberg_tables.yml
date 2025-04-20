@@ -42,7 +42,7 @@ jobs:
           
           echo "Extracting Spark..."
           tar -xzf spark.tgz
-          sudo mv spark-3.5.5-bin-hadoop3 /usr/local/spark
+          sudo mv spark-3.4.4-bin-hadoop3 /usr/local/spark
 
           echo "Setting up Spark environment..."
           echo "SPARK_HOME=/usr/local/spark" >> $GITHUB_ENV
