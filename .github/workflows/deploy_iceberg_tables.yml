@@ -90,10 +90,11 @@ jobs:
 
           echo "Available JARs:"
           find /opt/aws-glue-libs/jarsv1 -name "*.jar"
-          
+
           echo "🚀 Submitting Spark job with JARs..."
           /usr/local/spark/bin/spark-submit \
           --jars "$jars" \
           --driver-class-path "$jars" \
+          --conf "spark.driver.extraClassPath=$jars" \
           src/glue_etl/bootstrap/test_iceberg.py
 
