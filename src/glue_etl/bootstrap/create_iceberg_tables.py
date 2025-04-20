@@ -3,6 +3,7 @@ import yaml
 from pyspark.sql import SparkSession
 import boto3
 from botocore.exceptions import ClientError
+import textwrap
 
 def load_config(path: str) -> dict:
     with open(path, "r") as f:
@@ -23,7 +24,7 @@ def generate_sql(conf: dict) -> str:
     partition_clause = f"PARTITIONED BY ({', '.join(conf['partitioned_by'])})" if conf.get("partitioned_by") else ""
     location_clause = f"LOCATION '{conf['location']}'" if conf.get("location") else ""
 
-    return f"""
+    sql_query = f"""
     CREATE TABLE IF NOT EXISTS glue_catalog.{conf['database']}.{conf['table']} (
       {columns}
     )
@@ -32,6 +33,7 @@ def generate_sql(conf: dict) -> str:
     {partition_clause}
     TBLPROPERTIES ('format-version'='{conf.get("format_version", "2")}')
     """
+    return textwrap.dedent(sql_query).strip()
 
 def main():
     if len(sys.argv) < 3:
@@ -60,11 +62,11 @@ def main():
     try:
         print("🔧 Running SQL:\n", create_sql)
         spark.sql(create_sql)
+        print(f"✅ Iceberg table glue_catalog.{conf['database']}.{conf['table']} created.")
     except Exception as e:
         print("❌ Error executing SQL:")
         import traceback
         traceback.print_exc()    
     
-    print(f"✅ Iceberg table glue_catalog.{conf['database']}.{conf['table']} created.")
 if __name__ == "__main__":
     main()
