@@ -65,4 +65,4 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .getOrCreate()
 
 #spark.sql("SHOW DATABASES").show()
-print(os.environ.get("CLASSPATH"))
+print(f"❌ get class file path: {os.environ.get("CLASSPATH")}")
