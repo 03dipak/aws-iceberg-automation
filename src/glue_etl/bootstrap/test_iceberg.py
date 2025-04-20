@@ -1,6 +1,6 @@
 import sys
 import yaml
-from pyspark.sql import SparkSession
+
 import boto3
 from botocore.exceptions import ClientError
 import textwrap
@@ -54,7 +54,7 @@ for url in JARS:
 full_har_dir =  ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])
 
 os.environ["PYSPARK_SUBMIT_ARGS"] = f"--jars {full_har_dir} pyspark-shell"
-
+from pyspark.sql import SparkSession
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
