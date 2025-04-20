@@ -10,6 +10,11 @@ import zipfile
 from py4j.protocol import Py4JJavaError
 
 
+jar_dir = "/opt/aws-glue-libs/jarsv1"
+jars = ",".join([os.path.join(jar_dir, f) for f in os.listdir(jar_dir) if f.endswith(".jar")])
+
+print(f"🔍 Using JARs:\n{jars}\n")
+
 # Check if JARs are included in the classpath
 print("ClassPath:", os.environ.get("CLASSPATH"))
 print("PYSPARK_SUBMIT_ARGS:", os.environ.get("PYSPARK_SUBMIT_ARGS"))
@@ -26,6 +31,8 @@ with zipfile.ZipFile(jar_path, 'r') as jar:
 from pyspark.sql import SparkSession
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
+        .config("spark.jars", jars) \
+        .config("spark.driver.extraClassPath", jars) \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
         .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
         .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO") \
@@ -37,6 +44,9 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .enableHiveSupport() \
         .getOrCreate()
 
+# Check if JARs are included in the classpath
+print("ClassPath:", os.environ.get("CLASSPATH"))
+print("PYSPARK_SUBMIT_ARGS:", os.environ.get("PYSPARK_SUBMIT_ARGS"))
 print("hello")
 print("--------------------------")
 print(spark.sparkContext._conf.get("spark.jars"))
