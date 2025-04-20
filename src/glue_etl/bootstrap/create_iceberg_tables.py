@@ -71,8 +71,8 @@ def main():
 
     JARS = [
         # Iceberg JARs
-        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12/1.3.0/iceberg-spark-runtime-3.3_2.12-1.3.0.jar",
-        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-aws/1.3.0/iceberg-aws-1.3.0.jar",
+        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark3-runtime/1.5.0/iceberg-spark3-runtime-3.5_2.12-1.5.0.jar",
+        "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-aws/1.5.0/iceberg-aws-1.5.0.jar",
         # AWS SDK JARs
         "https://repo1.maven.org/maven2/software/amazon/awssdk/glue/2.20.143/glue-2.20.143.jar",
         "https://repo1.maven.org/maven2/software/amazon/awssdk/sts/2.20.143/sts-2.20.143.jar",
@@ -130,7 +130,13 @@ def main():
         .enableHiveSupport() \
         .getOrCreate()
         
-
+    # Check if the Iceberg extensions are loaded by trying to access a function that uses them
+    try:
+        spark.catalog.listTables()  # This should trigger Iceberg extensions if properly loaded
+        print("✅ Iceberg extensions loaded successfully.")
+    except Exception as e:
+        print(f"❌ Error accessing Iceberg tables: {e}")
+        
     create_sql = generate_sql(conf)
     ensure_database_exists(conf['database'])
     try:
