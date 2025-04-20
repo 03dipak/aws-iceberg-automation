@@ -22,38 +22,21 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::980921712180:role/WebConsole
           aws-region: ap-south-1
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"   
-      
+          python-version: "3.10"
+
       - name: Check Python version
         run: python --version
-      
+
       - name: Install dependencies
         run: |
           pip install requests
           pip install pyspark==3.4.1
           pip install boto3
           pip install pyyaml
-
-      - name: Install Java (needed for `jar` command)
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: 🧪 Check for SparkCatalog class in Iceberg JAR
-        run: |
-          echo "Downloading Iceberg JAR..."
-          mkdir -p /opt/aws-glue-libs/jarsv1
-          curl -L -o /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar \
-            https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.4_2.12/1.4.0/iceberg-spark-runtime-3.4_2.12-1.4.0.jar
-
-          echo "Checking if SparkCatalog class exists..."
-          jar tf /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar | \
-            grep "org/apache/iceberg/spark/SparkCatalog.class" || echo "❌ SparkCatalog class NOT FOUND!"
 
       - name: Install Spark (and dependencies)
         run: |
@@ -74,7 +57,13 @@ jobs:
         run: |
           /usr/local/spark/bin/spark-submit --version
 
-      - name: Setup Python and Spark (or use Glue Job trigger here)
+      - name: Setup Spark with JARs
+        run: |
+          echo "Setting PYSPARK_SUBMIT_ARGS..."
+          full_har_dir=$(echo $JAR_DIR/*.jar | tr ' ' ',')
+          echo "PYSPARK_SUBMIT_ARGS=--jars $full_har_dir pyspark-shell" >> $GITHUB_ENV
+
+      - name: 🧪 Run Iceberg Table Creation Script
         run: |
           echo "🔧 Running Iceberg Table Creation Script..."
           /usr/local/spark/bin/spark-submit src/glue_etl/bootstrap/test_iceberg.py
