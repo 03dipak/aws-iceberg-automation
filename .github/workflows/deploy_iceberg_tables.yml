@@ -78,6 +78,7 @@ jobs:
   
             "https://repo1.maven.org/maven2/software/amazon/awssdk/http-client-spi/2.20.143/http-client-spi-2.20.143.jar"
             "https://repo1.maven.org/maven2/software/amazon/awssdk/url-connection-client/2.20.143/url-connection-client-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.20.143/s3-2.20.143.jar" 
           )
 
           for url in "${urls[@]}"; do
