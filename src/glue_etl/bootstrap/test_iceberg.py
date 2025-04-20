@@ -67,6 +67,13 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.executor.extraClassPath", full_har_dir) \
         .getOrCreate()
 
+print("hello")
+print("--------------------------")
+print(spark.sparkContext._conf.get("spark.jars"))
+print("--------------------------")
+print(spark.sparkContext._conf.get("spark.driver.extraClassPath"))
+print("--------------------------")
+print("hello")
 
 print("JARs available in JAR_DIR:")
 print(os.listdir(JAR_DIR))
