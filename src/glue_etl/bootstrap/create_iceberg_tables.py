@@ -33,6 +33,25 @@ def generate_sql(conf: dict) -> str:
     {partition_clause}
     TBLPROPERTIES ('format-version'='{conf.get("format_version", "2")}')
     """
+    sql_query = f"""
+        CREATE TABLE IF NOT EXISTS glue_catalog.bronze.customers (
+            FirstName STRING,
+            LastName STRING,
+            CompanyName STRING,
+            EmailAddress STRING,
+            Phone STRING,
+            CustomerID STRING,
+            AddressLine1 STRING,
+            City STRING,
+            CountryRegion STRING,
+            PostalCode STRING
+        )
+        USING iceberg
+        LOCATION 's3://glue-bucket-dev-prod-bucket-march2025/warehouse/bronze/customers'
+        PARTITIONED BY (CountryRegion, PostalCode)
+        TBLPROPERTIES ('format-version'='2')
+    """
+
     return textwrap.dedent(sql_query).strip()
 
 def main():
