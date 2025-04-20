@@ -64,6 +64,6 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.executor.extraClassPath", JAR_DIR) \
         .getOrCreate()
 
-#spark.sql("SHOW DATABASES").show()
+spark.sql("SHOW DATABASES").show()
 pathcheck = os.environ.get("CLASSPATH")
 print(f"❌ get class file path: {pathcheck}")
