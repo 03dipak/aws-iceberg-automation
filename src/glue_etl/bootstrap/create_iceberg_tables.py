@@ -136,6 +136,13 @@ def main():
         print("✅ Iceberg extensions loaded successfully.")
     except Exception as e:
         print(f"❌ Error accessing Iceberg tables: {e}")
+    
+    try:
+        # Attempt to create a database if it doesn't exist
+        spark.sql("CREATE DATABASE IF NOT EXISTS test_database")
+        print("✅ Database 'test_database' created or already exists.")
+    except Exception as e:
+        print(f"❌ Error occurred while creating database: {e}")
         
     create_sql = generate_sql(conf)
     ensure_database_exists(conf['database'])
