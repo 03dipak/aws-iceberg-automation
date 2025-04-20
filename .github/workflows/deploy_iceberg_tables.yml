@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
-          pip install pyspark
+          pip install pyspark==3.4.1
           pip install boto3
           pip install pyyaml
 
