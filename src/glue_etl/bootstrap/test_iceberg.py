@@ -65,10 +65,7 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.defaultCatalog", "glue_catalog") \
-        .config("spark.jars", full_har_dir) \
         .enableHiveSupport() \
-        .config("spark.driver.extraClassPath", full_har_dir) \
-        .config("spark.executor.extraClassPath", full_har_dir) \
         .getOrCreate()
 
 print("hello")
