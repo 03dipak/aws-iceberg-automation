@@ -52,6 +52,9 @@ for url in JARS:
             print(f"❌ File write error: {io_err}")
 
 full_har_dir =  ",".join([os.path.join(JAR_DIR, jar.split("/")[-1]) for jar in JARS])
+
+os.environ["PYSPARK_SUBMIT_ARGS"] = f"--jars {full_har_dir} pyspark-shell"
+
 warehouse_path = "s3://glue-bucket-dev-prod-bucket-march2025/warehouse/"
 spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
