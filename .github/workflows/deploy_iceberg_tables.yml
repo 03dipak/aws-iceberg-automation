@@ -88,11 +88,12 @@ jobs:
           # Build comma-separated list of JARs
           jars=$(echo $JAR_DIR/*.jar | tr ' ' ',')
 
+          echo "Available JARs:"
+          find /opt/aws-glue-libs/jarsv1 -name "*.jar"
+          
           echo "🚀 Submitting Spark job with JARs..."
           /usr/local/spark/bin/spark-submit \
           --jars "$jars" \
+          --driver-class-path "$jars" \
           src/glue_etl/bootstrap/test_iceberg.py
 
-          echo "Checking if SparkCatalog class exists..."
-          jar tf /opt/aws-glue-libs/jarsv1/iceberg-spark-runtime-3.4_2.12-1.4.0.jar | \
-          grep "org/apache/iceberg/spark/SparkCatalog.class" || echo "❌ SparkCatalog class NOT FOUND!"
