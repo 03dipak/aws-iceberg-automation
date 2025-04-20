@@ -8,15 +8,17 @@ def load_config(path: str) -> dict:
 
 def create_spark_session(warehouse_path: str, app_name="IcebergTableCreator") -> SparkSession:
     return (
-        SparkSession.builder.appName(app_name)
-        .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog")
-        .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog")
-        .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO")
-        .config("spark.sql.catalog.glue_catalog.warehouse", warehouse_path)
-        .config("spark.sql.catalog.glue_catalog.lock-impl", "org.apache.iceberg.aws.glue.DynamoLockManager")
-        .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table")
-        .config("spark.sql.defaultCatalog", "glue_catalog")
-        .enableHiveSupport()
+        SparkSession.builder.appName(app_name) \
+        .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
+        .config("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog") \
+        .config("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO") \
+        .config("spark.sql.catalog.glue_catalog.warehouse", warehouse_path) \
+        .config("spark.sql.catalog.glue_catalog.lock-impl", "org.apache.iceberg.aws.glue.DynamoLockManager") \
+        .config("spark.sql.catalog.glue_catalog.lock.table", "iceberg_lock_table") \
+        .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
+        .config("spark.sql.defaultCatalog", "glue_catalog") \
+        .config("spark.jars", "/opt/aws-glue-libs/jarsv1/org/apache/iceberg/iceberg-spark-runtime-3.3_2.12-1.3.0.jar") \
+        .enableHiveSupport() \
         .getOrCreate()
     )
 
