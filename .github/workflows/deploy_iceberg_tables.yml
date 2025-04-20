@@ -70,15 +70,6 @@ jobs:
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
           echo "🔧 Running Iceberg Table Creation Script..."
-          /usr/local/spark/bin/spark-submit \
-          --jars /tmp/spark/jars/iceberg-spark-runtime-3.3_2.12-1.4.2.jar,/tmp/spark/jars/hadoop-aws-3.3.2.jar,/tmp/spark/jars/aws-java-sdk-bundle-1.11.1054.jar \
-          --conf spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog \
-          --conf spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog \
-          --conf spark.sql.catalog.glue_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO \
-          --conf spark.sql.catalog.glue_catalog.warehouse=s3://glue-bucket-dev-prod-bucket-march2025/warehouse/ \
-          --conf spark.sql.catalog.glue_catalog.lock-impl=org.apache.iceberg.aws.glue.DynamoLockManager \
-          --conf spark.sql.catalog.glue_catalog.lock.table=iceberg_lock_table \
-          --conf spark.sql.defaultCatalog=glue_catalog \
-          src/glue_etl/bootstrap/create_iceberg_tables.py \
+          python src/glue_etl/bootstrap/create_iceberg_tables.py \
           iceberg_tables/customers.yml \
           s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
