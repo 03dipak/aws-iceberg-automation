@@ -85,9 +85,24 @@ def main():
         filename = os.path.join(JAR_DIR, url.split("/")[-1])
         if not os.path.exists(filename):
             print(f"📥 Downloading: {url}")
-            r = requests.get(url)
-            with open(filename, "wb") as f:
-                f.write(r.content)  
+            try:
+                r = requests.get(url, timeout=10)
+                r.raise_for_status()  # Raise error for bad HTTP responses
+
+                with open(filename, "wb") as f:
+                    f.write(r.content)
+
+                print(f"✅ File downloaded and saved as '{filename}'")
+            except requests.exceptions.HTTPError as http_err:
+                print(f"❌ HTTP error occurred: {http_err}")
+            except requests.exceptions.ConnectionError as conn_err:
+                print(f"❌ Connection error occurred: {conn_err}")
+            except requests.exceptions.Timeout as timeout_err:
+                print(f"❌ Timeout error occurred: {timeout_err}")
+            except requests.exceptions.RequestException as req_err:
+                print(f"❌ Request failed: {req_err}")
+            except IOError as io_err:
+                print(f"❌ File write error: {io_err}")
 
     spark = SparkSession.builder.appName("IcebergTableCreator") \
         .config("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog") \
