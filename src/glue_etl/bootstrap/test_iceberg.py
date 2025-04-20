@@ -62,6 +62,7 @@ spark = SparkSession.builder.appName("IcebergTableCreator") \
         .enableHiveSupport() \
         .getOrCreate()
 
-spark.sql("SHOW DATABASES").show()
 pathcheck = os.environ.get("CLASSPATH")
 print(f"❌ get class file path: {pathcheck}")
+spark.sql("SHOW DATABASES").show()
+
