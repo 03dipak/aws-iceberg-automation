@@ -61,6 +61,4 @@ jobs:
       - name: Setup Python and Spark (or use Glue Job trigger here)
         run: |
           echo "🔧 Running Iceberg Table Creation Script..."
-          /usr/local/spark/bin/spark-submit src/glue_etl/bootstrap/create_iceberg_tables.py \
-          iceberg_tables/customers.yml \
-          s3://glue-bucket-dev-prod-bucket-march2025/warehouse/
+          /usr/local/spark/bin/spark-submit src/glue_etl/bootstrap/test_iceberg.py
