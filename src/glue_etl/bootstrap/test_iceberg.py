@@ -7,6 +7,7 @@ import textwrap
 import os
 import requests
 import zipfile
+from py4j.protocol import Py4JJavaError
 
 
 
@@ -72,8 +73,16 @@ print("--------------------------")
 print(spark.sparkContext._conf.get("spark.jars"))
 print("--------------------------")
 print(spark.sparkContext._conf.get("spark.driver.extraClassPath"))
-print("--------------------------")
+print("--------------------------") 
 print("hello")
+
+try:
+    catalog_class = spark._jvm.java.lang.Class.forName("org.apache.iceberg.spark.SparkCatalog")
+    print("✅ SparkCatalog class found!")
+except Py4JJavaError as e:
+    print("❌ SparkCatalog class NOT found.")
+    print(e.java_exception.getMessage())
+
 
 print("JARs available in JAR_DIR:")
 print(os.listdir(JAR_DIR))
