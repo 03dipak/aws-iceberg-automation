@@ -84,6 +84,7 @@ jobs:
             "https://repo1.maven.org/maven2/software/amazon/awssdk/endpoints-spi/2.20.143/endpoints-spi-2.20.143.jar"
             "https://repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar"
             "https://repo1.maven.org/maven2/software/amazon/awssdk/aws-json-protocol/2.20.143/aws-json-protocol-2.20.143.jar"
+            "https://repo1.maven.org/maven2/software/amazon/awssdk/metrics-spi/2.20.143/metrics-spi-2.20.143.jar"
           )
 
           for url in "${urls[@]}"; do
